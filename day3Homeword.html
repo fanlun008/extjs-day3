@@ -1,0 +1,122 @@
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>MyTabPanel</title>
+  <link rel="stylesheet" type="text/css" href="./resources/css/ext-all.css" />
+  <script type="text/javascript" src="./adapter/ext/ext-base.js"></script>
+  <script type="text/javascript" src="./ext-all.js"></script>
+  <script type="text/javascript">
+    Ext.onReady(function () {
+
+      var currentNode;
+
+      var root = new Ext.tree.TreeNode({
+        text: 'school',
+        expanded: true,
+      })
+
+      var contextMenu = new Ext.menu.Menu({
+        id: 'theContextMenu',
+        items: [{
+          id: 'createNode',
+          text: 'create',
+        }, {
+          id: 'deleteNode',
+          text: 'delete',
+        }],
+        listeners: {
+          itemclick: function (item) {
+            var n = item.parentMenu.contextNode;
+            switch (item.id) {
+              case 'deleteNode':
+                console.log(' you want to delete node')
+                console.log(n);
+                break;
+              case 'createNode':
+                console.log(' you want to create node')
+                addNode(currentNode, 'nodeText');
+                break;
+            }
+          }
+        }
+      })
+
+      function addNode(node, nodeText) {
+        switch (node.getDepth()) {
+          case 0:
+            node.appendChild(new Ext.tree.TreeNode({
+              text: nodeText
+            }));
+            break;
+          case 1:
+            node.appendChild(new Ext.tree.TreeNode({
+              text: nodeText
+            }));
+            break;
+          case 2:
+            node.parentNode.appendChild(new Ext.tree.TreeNode({
+              text: nodeText
+            }));
+            break;
+        }
+      }
+
+      var class1 = new Ext.tree.TreeNode({
+        text: 'class1',
+        editable: true,
+        expanded: true,
+      });
+
+      var student1 = new Ext.tree.TreeNode({
+        text: 'student1',
+
+      })
+      class1.appendChild(student1);
+      root.appendChild(class1);
+
+      var tree = new Ext.tree.TreePanel({
+        root: root,
+        contextMenu: contextMenu,
+        listeners: {
+          contextmenu: function (node, e) {
+            node.select();
+            var c = node.getOwnerTree().contextMenu;
+            c.contextNode = node;
+            currentNode = node;
+            c.showAt(e.getXY());
+          },
+          'click': function(node, e) {
+            currentNode = node;
+          }
+        }
+      })
+
+      var view = new Ext.Viewport({
+        layout: 'border',
+        items: [{
+            title: '列表',
+            region: 'west',
+            width: 400,
+            collapseMode: 'mini',
+            items: tree
+          },
+          {
+            title: 'center',
+            region: 'center',
+            html: 'html'
+          }
+        ]
+      })
+
+    })
+  </script>
+</head>
+
+<body>
+  <div>
+
+  </div>
+</body>
+
+</html>
