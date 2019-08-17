@@ -100,6 +100,11 @@
           }
         }
       })
+
+      var treeEditor = new Ext.tree.TreeEditor(tree, {
+        allowBlank: false
+      })
+
       var inputPanel = new Ext.form.FormPanel({
         title: 'add node',
         defaultType: 'textfield',
