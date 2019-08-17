@@ -2,7 +2,7 @@
 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>MyTabPanel</title>
+  <title>day3homework</title>
   <link rel="stylesheet" type="text/css" href="./resources/css/ext-all.css" />
   <script type="text/javascript" src="./adapter/ext/ext-base.js"></script>
   <script type="text/javascript" src="./ext-all.js"></script>
@@ -14,32 +14,6 @@
       var root = new Ext.tree.TreeNode({
         text: 'school',
         expanded: true,
-      })
-
-      var contextMenu = new Ext.menu.Menu({
-        id: 'theContextMenu',
-        items: [{
-          id: 'createNode',
-          text: 'create',
-        }, {
-          id: 'deleteNode',
-          text: 'delete',
-        }],
-        listeners: {
-          itemclick: function (item) {
-            var n = item.parentMenu.contextNode;
-            switch (item.id) {
-              case 'deleteNode':
-                console.log(' you want to delete node')
-                console.log(n);
-                break;
-              case 'createNode':
-                console.log(' you want to create node')
-                addNode(currentNode, 'nodeText');
-                break;
-            }
-          }
-        }
       })
 
       function addNode(node, nodeText) {
@@ -56,7 +30,8 @@
             break;
           case 2:
             node.parentNode.appendChild(new Ext.tree.TreeNode({
-              text: nodeText
+              text: nodeText,
+              leaf: true
             }));
             break;
         }
@@ -75,6 +50,40 @@
       class1.appendChild(student1);
       root.appendChild(class1);
 
+      var contextMenu = new Ext.menu.Menu({
+        id: 'theContextMenu',
+        items: [{
+          id: 'createNode',
+          text: 'create',
+        }, {
+          id: 'deleteNode',
+          text: 'delete',
+        }],
+        listeners: {
+          itemclick: function (item) {
+            var n = item.parentMenu.contextNode;
+            switch (item.id) {
+              case 'deleteNode':
+                if(n.isLeaf()) {
+                  n.remove()
+                  return
+                } 
+                if(n.childNodes.length !== 0){
+                  Ext.Msg.alert('Waring', 'some child node still exist')
+                } else {
+                  n.remove()
+                  return;
+                }
+                break;
+              case 'createNode':
+                console.log(' you want to create node')
+                addNode(currentNode, 'nodeText');
+                break;
+            }
+          }
+        }
+      })
+
       var tree = new Ext.tree.TreePanel({
         root: root,
         contextMenu: contextMenu,
@@ -86,26 +95,56 @@
             currentNode = node;
             c.showAt(e.getXY());
           },
-          'click': function(node, e) {
+          'click': function (node, e) {
             currentNode = node;
           }
         }
+      })
+      var inputPanel = new Ext.form.FormPanel({
+        title: 'add node',
+        defaultType: 'textfield',
+        labelAlign: 'left',
+        labelWidth: 50,
+        frame: true,
+        width: 200,
+        items: [{
+          id: 'inputNameId',
+          fieldLabel: 'name',
+          name: 'name'
+        }],
+        buttons: [{
+          text: 'submit',
+          handler: function () {
+            if (currentNode !== undefined) {
+              var text = Ext.get('inputNameId').getValue();
+              if (text == '') {
+                Ext.Msg.alert('Waring', 'name can not empty')
+              }
+              else {
+                addNode(currentNode, text)
+              }
+            }
+            else {
+              Ext.Msg.alert('Waring', 'please select node to add')
+            }
+          }
+        }]
       })
 
       var view = new Ext.Viewport({
         layout: 'border',
         items: [{
-            title: '列表',
-            region: 'west',
-            width: 400,
-            collapseMode: 'mini',
-            items: tree
-          },
-          {
-            title: 'center',
-            region: 'center',
-            html: 'html'
-          }
+          title: '列表',
+          region: 'west',
+          width: 400,
+          collapseMode: 'mini',
+          items: tree
+        },
+        {
+          title: 'center',
+          region: 'center',
+          items: inputPanel
+        }
         ]
       })
 
