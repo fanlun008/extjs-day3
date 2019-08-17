@@ -64,11 +64,11 @@
             var n = item.parentMenu.contextNode;
             switch (item.id) {
               case 'deleteNode':
-                if(n.isLeaf()) {
+                if (n.isLeaf()) {
                   n.remove()
                   return
-                } 
-                if(n.childNodes.length !== 0){
+                }
+                if (n.childNodes.length !== 0) {
                   Ext.Msg.alert('Waring', 'some child node still exist')
                 } else {
                   n.remove()
@@ -77,7 +77,13 @@
                 break;
               case 'createNode':
                 console.log(' you want to create node')
-                addNode(currentNode, 'nodeText');
+                Ext.Msg.prompt('Name', 'Please enter your name:', function (btn, text) {
+                  if (btn == 'ok') {
+                    // process text value and close...
+                    addNode(currentNode, text);
+                  }
+                });
+                
                 break;
             }
           }
